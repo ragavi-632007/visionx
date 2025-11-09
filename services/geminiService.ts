@@ -3,12 +3,8 @@ import { AnalysisResult } from "../types";
 
 function resolveApiKey(): string | null {
   // Check Vite env var (import.meta.env.VITE_GEMINI_API_KEY) - automatically exposed by Vite
-  const viteKey = (import.meta as any)?.env?.VITE_GEMINI_API_KEY as string | undefined;
+  const viteKey = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
   if (viteKey && viteKey.trim()) return viteKey.trim();
-  
-  // Check process.env.GEMINI_API_KEY (for backward compatibility with vite.config.ts define)
-  const processKey = (process as any)?.env?.GEMINI_API_KEY as string | undefined;
-  if (processKey && processKey.trim()) return processKey.trim();
   
   // Check window scoped API key
   const windowKey = (globalThis as any)?.API_KEY as string | undefined;

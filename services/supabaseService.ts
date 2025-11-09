@@ -1,17 +1,22 @@
 import { createClient } from '@supabase/supabase-js';
 import type { User, Session } from '@supabase/supabase-js';
 
-if (!process.env.SUPABASE_URL) {
+// Use import.meta.env for Vite (works in production on Vercel)
+// Vite automatically exposes VITE_ prefixed environment variables to the client
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_API_KEY;
+
+if (!supabaseUrl) {
     throw new Error("SUPABASE_URL environment variable not set");
 }
 
-if (!process.env.SUPABASE_API_KEY) {
+if (!supabaseKey) {
     throw new Error("SUPABASE_API_KEY environment variable not set");
 }
 
 export const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_API_KEY
+    supabaseUrl,
+    supabaseKey
 );
 
 // Auth helper functions
