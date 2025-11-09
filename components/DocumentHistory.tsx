@@ -136,9 +136,9 @@ const DocumentHistory = ({ userId }: DocumentHistoryProps) => {
                     </p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                     {/* Document List */}
-                    <div className="space-y-4">
+                    <div className="space-y-3 sm:space-y-4 order-2 lg:order-1">
                         <h3 className="text-lg font-semibold text-brand-dark dark:text-white">
                             Your Documents ({documents.length})
                         </h3>
@@ -187,8 +187,8 @@ const DocumentHistory = ({ userId }: DocumentHistoryProps) => {
                     </div>
 
                     {/* Document Details */}
-                    <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-brand-dark dark:text-white">
+                    <div className="space-y-4 order-1 lg:order-2">
+                        <h3 className="text-base sm:text-lg font-semibold text-brand-dark dark:text-white">
                             Analysis Details
                         </h3>
                         {selectedDoc ? (
@@ -202,7 +202,7 @@ const DocumentHistory = ({ userId }: DocumentHistoryProps) => {
                                     </p>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                     <AnalysisSection
                                         title="Pros"
                                         items={selectedDoc.pros || []}

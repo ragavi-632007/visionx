@@ -113,67 +113,68 @@ const ChatHistory = ({ userId, onLoadSession }: ChatHistoryProps) => {
     }
 
     return (
-        <div className="p-4 md:p-6">
-            <div className="mb-6">
-                <h2 className="text-2xl font-bold text-brand-dark dark:text-white mb-2">Chat History</h2>
-                <p className="text-gray-600 dark:text-gray-400">
+        <div className="p-2 sm:p-4 md:p-6">
+            <div className="mb-4 sm:mb-6">
+                <h2 className="text-xl sm:text-2xl font-bold text-brand-dark dark:text-white mb-2">Chat History</h2>
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
                     View and manage your past conversations
                 </p>
             </div>
 
             {error && (
-                <div className="mb-4 p-4 bg-red-100 text-red-700 border border-red-300 rounded-lg dark:bg-red-900/20 dark:border-red-700 dark:text-red-300">
+                <div className="mb-4 p-3 sm:p-4 text-sm sm:text-base bg-red-100 text-red-700 border border-red-300 rounded-lg dark:bg-red-900/20 dark:border-red-700 dark:text-red-300">
                     {error}
                 </div>
             )}
 
             {sessions.length === 0 ? (
-                <div className="text-center py-12">
-                    <ChatIcon className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                    <p className="text-gray-600 dark:text-gray-400 text-lg">
+                <div className="text-center py-8 sm:py-12">
+                    <ChatIcon className="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-gray-400 mb-4" />
+                    <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg">
                         No conversations yet. Start chatting in the Legal Q&A tab!
                     </p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                     {/* Sessions List */}
-                    <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-brand-dark dark:text-white">
+                    <div className="space-y-3 sm:space-y-4 order-2 lg:order-1">
+                        <h3 className="text-base sm:text-lg font-semibold text-brand-dark dark:text-white">
                             Your Conversations ({sessions.length})
                         </h3>
-                        <div className="space-y-3 max-h-[600px] overflow-y-auto">
+                        <div className="space-y-2 sm:space-y-3 max-h-[400px] sm:max-h-[600px] overflow-y-auto">
                             {sessions.map((session) => (
                                 <div
                                     key={session.id}
-                                    className={`p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm border-2 cursor-pointer transition-all ${
+                                    className={`p-3 sm:p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm border-2 cursor-pointer transition-all ${
                                         selectedSession?.session_id === session.session_id
                                             ? 'border-brand-secondary'
                                             : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                                     }`}
                                     onClick={() => setSelectedSession(session)}
                                 >
-                                    <div className="flex justify-between items-start">
+                                    <div className="flex justify-between items-start gap-2">
                                         <div className="flex-1 min-w-0">
-                                            <h4 className="font-semibold text-brand-dark dark:text-white truncate mb-1">
+                                            <h4 className="font-semibold text-sm sm:text-base text-brand-dark dark:text-white truncate mb-1">
                                                 {session.title || 'Untitled Conversation'}
                                             </h4>
-                                            <div className="mt-2 flex flex-wrap gap-2 text-xs text-gray-500 dark:text-gray-400">
+                                            <div className="mt-1 sm:mt-2 flex flex-wrap gap-1 sm:gap-2 text-xs text-gray-500 dark:text-gray-400">
                                                 <span>{session.message_count} messages</span>
                                                 <span>•</span>
-                                                <span>{formatDate(session.updated_at)}</span>
+                                                <span className="hidden sm:inline">{formatDate(session.updated_at)}</span>
+                                                <span className="sm:hidden">{new Date(session.updated_at).toLocaleDateString()}</span>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-2 ml-2">
+                                        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
                                             {onLoadSession && (
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         handleLoadSession(session);
                                                     }}
-                                                    className="p-2 text-brand-secondary hover:bg-brand-light dark:hover:bg-slate-700 rounded-lg"
+                                                    className="p-1.5 sm:p-2 text-brand-secondary hover:bg-brand-light dark:hover:bg-slate-700 rounded-lg"
                                                     title="Continue this conversation"
                                                 >
-                                                    <ChatIcon className="w-5 h-5" />
+                                                    <ChatIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                                                 </button>
                                             )}
                                             <button
@@ -182,10 +183,10 @@ const ChatHistory = ({ userId, onLoadSession }: ChatHistoryProps) => {
                                                     handleDeleteSession(session.session_id);
                                                 }}
                                                 disabled={deletingId === session.session_id}
-                                                className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg disabled:opacity-50"
+                                                className="p-1.5 sm:p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg disabled:opacity-50"
                                                 title="Delete conversation"
                                             >
-                                                <TrashIcon className="w-5 h-5" />
+                                                <TrashIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                                             </button>
                                         </div>
                                     </div>
@@ -195,17 +196,17 @@ const ChatHistory = ({ userId, onLoadSession }: ChatHistoryProps) => {
                     </div>
 
                     {/* Messages View */}
-                    <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-brand-dark dark:text-white">
+                    <div className="space-y-3 sm:space-y-4 order-1 lg:order-2">
+                        <h3 className="text-base sm:text-lg font-semibold text-brand-dark dark:text-white">
                             Conversation Details
                         </h3>
                         {selectedSession ? (
-                            <div className="space-y-4">
-                                <div className="p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
-                                    <h4 className="font-semibold text-brand-dark dark:text-white mb-2">
+                            <div className="space-y-3 sm:space-y-4">
+                                <div className="p-3 sm:p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
+                                    <h4 className="font-semibold text-sm sm:text-base text-brand-dark dark:text-white mb-2">
                                         {selectedSession.title || 'Untitled Conversation'}
                                     </h4>
-                                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 space-y-1">
                                         <p>Started: {formatDate(selectedSession.created_at)}</p>
                                         <p>Last updated: {formatDate(selectedSession.updated_at)}</p>
                                         <p>Total messages: {selectedSession.message_count}</p>
@@ -215,9 +216,9 @@ const ChatHistory = ({ userId, onLoadSession }: ChatHistoryProps) => {
                                 {isLoadingMessages ? (
                                     <LoadingSpinner />
                                 ) : (
-                                    <div className="space-y-4 max-h-[500px] overflow-y-auto p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
+                                    <div className="space-y-3 sm:space-y-4 max-h-[400px] sm:max-h-[500px] overflow-y-auto p-3 sm:p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
                                         {messages.length === 0 ? (
-                                            <p className="text-center text-gray-600 dark:text-gray-400">
+                                            <p className="text-center text-sm sm:text-base text-gray-600 dark:text-gray-400">
                                                 No messages in this conversation
                                             </p>
                                         ) : (
@@ -227,14 +228,14 @@ const ChatHistory = ({ userId, onLoadSession }: ChatHistoryProps) => {
                                                     className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                                                 >
                                                     <div
-                                                        className={`max-w-xl p-3 rounded-2xl whitespace-pre-wrap ${
+                                                        className={`max-w-[85%] sm:max-w-xl p-2 sm:p-3 rounded-2xl whitespace-pre-wrap text-xs sm:text-sm ${
                                                             msg.role === 'user'
                                                                 ? 'bg-brand-secondary text-white rounded-br-none'
                                                                 : 'bg-white dark:bg-slate-800 text-brand-dark dark:text-gray-200 rounded-bl-none'
                                                         }`}
                                                     >
-                                                        <p className="text-sm">{msg.message}</p>
-                                                        <p className={`text-xs mt-2 ${
+                                                        <p>{msg.message}</p>
+                                                        <p className={`text-xs mt-1 sm:mt-2 ${
                                                             msg.role === 'user'
                                                                 ? 'text-white/70'
                                                                 : 'text-gray-500 dark:text-gray-400'
@@ -249,8 +250,8 @@ const ChatHistory = ({ userId, onLoadSession }: ChatHistoryProps) => {
                                 )}
                             </div>
                         ) : (
-                            <div className="p-8 bg-gray-50 dark:bg-slate-700 rounded-lg text-center">
-                                <p className="text-gray-600 dark:text-gray-400">
+                            <div className="p-6 sm:p-8 bg-gray-50 dark:bg-slate-700 rounded-lg text-center">
+                                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
                                     Select a conversation from the list to view its messages
                                 </p>
                             </div>

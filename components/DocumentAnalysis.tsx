@@ -359,15 +359,16 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
         >
           {t('analysis.uploadLabel')}
         </label>
-        <div className="flex gap-3 mb-3">
+        <div className="flex gap-2 sm:gap-3 mb-3">
           <button
             type="button"
             onClick={startCamera}
             disabled={isLoading || showCamera}
-            className="flex items-center gap-2 px-4 py-2 bg-brand-secondary text-white font-medium rounded-lg hover:bg-sky-600 focus:outline-none focus:ring-4 focus:ring-sky-300 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
+            className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-brand-secondary text-white text-sm sm:text-base font-medium rounded-lg hover:bg-sky-600 focus:outline-none focus:ring-4 focus:ring-sky-300 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
           >
-            <CameraIcon className="w-5 h-5" />
-            Take Photo
+            <CameraIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="hidden xs:inline">Take Photo</span>
+            <span className="xs:hidden">Camera</span>
           </button>
         </div>
         <div
@@ -403,15 +404,15 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
 
       {/* Camera Modal */}
       {showCamera && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
-          <div className="relative bg-white dark:bg-slate-800 rounded-lg p-4 max-w-4xl w-full mx-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-2 sm:p-4">
+          <div className="relative bg-white dark:bg-slate-800 rounded-lg p-2 sm:p-4 max-w-4xl w-full h-full sm:h-auto flex flex-col">
             <button
               onClick={stopCamera}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 z-50 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 bg-white dark:bg-slate-800 rounded-full shadow-lg"
             >
-              <XIcon className="w-6 h-6" />
+              <XIcon className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
-            <div className="mt-8 relative bg-black rounded-lg overflow-hidden" style={{ minHeight: '400px' }}>
+            <div className="mt-6 sm:mt-8 relative bg-black rounded-lg overflow-hidden flex-1" style={{ minHeight: '300px' }}>
               <video
                 ref={videoRef}
                 autoPlay
@@ -419,8 +420,8 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
                 muted
                 className="w-full h-full object-contain"
                 style={{ 
-                  maxHeight: '70vh',
-                  minHeight: '400px',
+                  maxHeight: 'calc(100vh - 200px)',
+                  minHeight: '300px',
                   display: 'block',
                   backgroundColor: '#000'
                 }}
@@ -433,23 +434,23 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
               {!stream && (
                 <div className="absolute inset-0 flex items-center justify-center bg-gray-900 text-white z-10">
                   <div className="text-center">
-                    <CameraIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-                    <p>Starting camera...</p>
+                    <CameraIcon className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 text-gray-400" />
+                    <p className="text-sm sm:text-base">Starting camera...</p>
                   </div>
                 </div>
               )}
               <canvas ref={canvasRef} className="hidden" />
             </div>
-            <div className="mt-4 flex justify-center gap-4">
+            <div className="mt-4 flex justify-center gap-3 sm:gap-4 pb-2 sm:pb-0">
               <button
                 onClick={capturePhoto}
-                className="px-6 py-3 bg-brand-secondary text-white font-bold rounded-lg shadow-md hover:bg-sky-600 focus:outline-none focus:ring-4 focus:ring-sky-300 transition-all"
+                className="flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-3 bg-brand-secondary text-white text-sm sm:text-base font-bold rounded-lg shadow-md hover:bg-sky-600 focus:outline-none focus:ring-4 focus:ring-sky-300 transition-all"
               >
                 Capture Photo
               </button>
               <button
                 onClick={stopCamera}
-                className="px-6 py-3 bg-gray-500 text-white font-bold rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-300 transition-all"
+                className="flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-3 bg-gray-500 text-white text-sm sm:text-base font-bold rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-300 transition-all"
               >
                 Cancel
               </button>
