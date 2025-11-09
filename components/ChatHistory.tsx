@@ -113,10 +113,10 @@ const ChatHistory = ({ userId, onLoadSession }: ChatHistoryProps) => {
     }
 
     return (
-        <div className="p-2 sm:p-4 md:p-6">
+        <div className="p-3 sm:p-4 md:p-6">
             <div className="mb-4 sm:mb-6">
                 <h2 className="text-xl sm:text-2xl font-bold text-brand-dark dark:text-white mb-2">Chat History</h2>
-                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+                <p className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-400">
                     View and manage your past conversations
                 </p>
             </div>
@@ -135,13 +135,13 @@ const ChatHistory = ({ userId, onLoadSession }: ChatHistoryProps) => {
                     </p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
                     {/* Sessions List */}
-                    <div className="space-y-3 sm:space-y-4 order-2 lg:order-1">
+                    <div className="space-y-2 sm:space-y-3 md:space-y-4 order-2 lg:order-1">
                         <h3 className="text-base sm:text-lg font-semibold text-brand-dark dark:text-white">
                             Your Conversations ({sessions.length})
                         </h3>
-                        <div className="space-y-2 sm:space-y-3 max-h-[400px] sm:max-h-[600px] overflow-y-auto">
+                        <div className="space-y-2 sm:space-y-3 max-h-[350px] sm:max-h-[500px] md:max-h-[600px] overflow-y-auto">
                             {sessions.map((session) => (
                                 <div
                                     key={session.id}
@@ -154,7 +154,7 @@ const ChatHistory = ({ userId, onLoadSession }: ChatHistoryProps) => {
                                 >
                                     <div className="flex justify-between items-start gap-2">
                                         <div className="flex-1 min-w-0">
-                                            <h4 className="font-semibold text-sm sm:text-base text-brand-dark dark:text-white truncate mb-1">
+                                            <h4 className="font-semibold text-xs sm:text-sm md:text-base text-brand-dark dark:text-white truncate mb-1">
                                                 {session.title || 'Untitled Conversation'}
                                             </h4>
                                             <div className="mt-1 sm:mt-2 flex flex-wrap gap-1 sm:gap-2 text-xs text-gray-500 dark:text-gray-400">
@@ -196,14 +196,14 @@ const ChatHistory = ({ userId, onLoadSession }: ChatHistoryProps) => {
                     </div>
 
                     {/* Messages View */}
-                    <div className="space-y-3 sm:space-y-4 order-1 lg:order-2">
+                    <div className="space-y-2 sm:space-y-3 md:space-y-4 order-1 lg:order-2">
                         <h3 className="text-base sm:text-lg font-semibold text-brand-dark dark:text-white">
                             Conversation Details
                         </h3>
                         {selectedSession ? (
-                            <div className="space-y-3 sm:space-y-4">
+                            <div className="space-y-2 sm:space-y-3 md:space-y-4">
                                 <div className="p-3 sm:p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
-                                    <h4 className="font-semibold text-sm sm:text-base text-brand-dark dark:text-white mb-2">
+                                    <h4 className="font-semibold text-xs sm:text-sm md:text-base text-brand-dark dark:text-white mb-2">
                                         {selectedSession.title || 'Untitled Conversation'}
                                     </h4>
                                     <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 space-y-1">
@@ -216,9 +216,9 @@ const ChatHistory = ({ userId, onLoadSession }: ChatHistoryProps) => {
                                 {isLoadingMessages ? (
                                     <LoadingSpinner />
                                 ) : (
-                                    <div className="space-y-3 sm:space-y-4 max-h-[400px] sm:max-h-[500px] overflow-y-auto p-3 sm:p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
+                                    <div className="space-y-2 sm:space-y-3 md:space-y-4 max-h-[300px] sm:max-h-[400px] md:max-h-[500px] overflow-y-auto p-2 sm:p-3 md:p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
                                         {messages.length === 0 ? (
-                                            <p className="text-center text-sm sm:text-base text-gray-600 dark:text-gray-400">
+                                            <p className="text-center text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-400">
                                                 No messages in this conversation
                                             </p>
                                         ) : (
@@ -228,13 +228,13 @@ const ChatHistory = ({ userId, onLoadSession }: ChatHistoryProps) => {
                                                     className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                                                 >
                                                     <div
-                                                        className={`max-w-[85%] sm:max-w-xl p-2 sm:p-3 rounded-2xl whitespace-pre-wrap text-xs sm:text-sm ${
+                                                        className={`max-w-[90%] sm:max-w-[85%] md:max-w-xl p-2 sm:p-3 rounded-2xl whitespace-pre-wrap text-xs sm:text-sm ${
                                                             msg.role === 'user'
                                                                 ? 'bg-brand-secondary text-white rounded-br-none'
                                                                 : 'bg-white dark:bg-slate-800 text-brand-dark dark:text-gray-200 rounded-bl-none'
                                                         }`}
                                                     >
-                                                        <p>{msg.message}</p>
+                                                        <p className="break-words">{msg.message}</p>
                                                         <p className={`text-xs mt-1 sm:mt-2 ${
                                                             msg.role === 'user'
                                                                 ? 'text-white/70'
@@ -250,8 +250,8 @@ const ChatHistory = ({ userId, onLoadSession }: ChatHistoryProps) => {
                                 )}
                             </div>
                         ) : (
-                            <div className="p-6 sm:p-8 bg-gray-50 dark:bg-slate-700 rounded-lg text-center">
-                                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+                            <div className="p-4 sm:p-6 md:p-8 bg-gray-50 dark:bg-slate-700 rounded-lg text-center">
+                                <p className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-400">
                                     Select a conversation from the list to view its messages
                                 </p>
                             </div>

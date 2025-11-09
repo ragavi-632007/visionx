@@ -26,7 +26,7 @@ const Dashboard = ({ onLogout, userId }: DashboardProps) => {
                 setActiveTab(tabName);
                 setMobileMenuOpen(false);
             }}
-            className={`flex items-center justify-center flex-shrink-0 px-3 sm:px-4 py-2 sm:py-3 font-semibold text-xs sm:text-sm md:text-base rounded-t-lg transition-colors duration-200 focus:outline-none whitespace-nowrap ${
+            className={`flex items-center justify-center flex-shrink-0 px-2 sm:px-3 md:px-4 py-2 sm:py-3 font-semibold text-xs sm:text-sm md:text-base rounded-t-lg transition-colors duration-200 focus:outline-none whitespace-nowrap min-w-[60px] sm:min-w-0 ${
                 activeTab === tabName
                     ? 'bg-white dark:bg-slate-800 text-brand-secondary border-b-2 border-brand-secondary'
                     : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-700'
@@ -83,8 +83,8 @@ const Dashboard = ({ onLogout, userId }: DashboardProps) => {
                     </div>
                     {/* Mobile Menu Dropdown */}
                     {mobileMenuOpen && (
-                        <div className="md:hidden mt-4 pb-4 border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3">
-                            <div className="flex items-center justify-between">
+                        <div className="md:hidden mt-4 pb-4 border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3 animate-slide-down">
+                            <div className="flex items-center justify-between px-2">
                                 <LanguageSwitcher />
                             </div>
                             <button 
@@ -92,13 +92,13 @@ const Dashboard = ({ onLogout, userId }: DashboardProps) => {
                                     setActiveTab('analysis');
                                     setMobileMenuOpen(false);
                                 }}
-                                className="w-full text-left px-3 py-2 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-md transition-colors"
+                                className="w-full text-left px-3 py-2.5 text-sm font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-md transition-colors"
                             >
                                 {t('common.dashboard')}
                             </button>
                             <button
                                 onClick={onLogout}
-                                className="w-full flex items-center justify-center px-3 py-2 text-sm font-semibold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-md transition-colors"
+                                className="w-full flex items-center justify-center px-3 py-2.5 text-sm font-semibold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-md transition-colors"
                             >
                                 <LogoutIcon className="w-4 h-4 mr-2" />
                                 {t('common.logout')}
@@ -110,7 +110,7 @@ const Dashboard = ({ onLogout, userId }: DashboardProps) => {
 
             <main className="container mx-auto p-2 sm:p-4 md:p-6">
                 <div className="w-full max-w-7xl mx-auto">
-                    <div className="flex border-b border-gray-200 dark:border-gray-700 overflow-x-auto -mx-2 sm:mx-0 px-2 sm:px-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    <div className="flex border-b border-gray-200 dark:border-gray-700 overflow-x-auto -mx-2 sm:mx-0 px-2 sm:px-0 hide-scrollbar">
                         <TabButton 
                             tabName="analysis" 
                             label={<span className="hidden sm:inline">{t('tabs.analysis')}</span>}

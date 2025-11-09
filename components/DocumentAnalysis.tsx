@@ -24,16 +24,16 @@ const AnalysisSection = ({
   items: string[];
   icon: React.ReactNode;
 }) => (
-  <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm">
-    <h3 className="flex items-center text-lg font-semibold text-brand-dark dark:text-white mb-3">
+  <div className="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-lg shadow-sm">
+    <h3 className="flex items-center text-base sm:text-lg font-semibold text-brand-dark dark:text-white mb-2 sm:mb-3">
       {icon}
       <span className="ml-2">{title}</span>
     </h3>
-    <ul className="space-y-2">
+    <ul className="space-y-1.5 sm:space-y-2">
       {items.map((item, index) => (
         <li key={index} className="flex items-start">
           <svg
-            className="w-4 h-4 text-brand-secondary mt-1 flex-shrink-0"
+            className="w-3 h-3 sm:w-4 sm:h-4 text-brand-secondary mt-1 flex-shrink-0"
             fill="currentColor"
             viewBox="0 0 20 20"
           >
@@ -43,7 +43,7 @@ const AnalysisSection = ({
               clipRule="evenodd"
             ></path>
           </svg>
-          <p className="ml-2 text-gray-700 dark:text-gray-300 text-sm">
+          <p className="ml-2 text-gray-700 dark:text-gray-300 text-xs sm:text-sm">
             {item}
           </p>
         </li>
@@ -351,11 +351,11 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
   }, [stream]);
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
+    <div className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
       <div>
         <label
           htmlFor="document-upload"
-          className="block text-lg font-medium text-brand-dark dark:text-gray-200 mb-2"
+          className="block text-base sm:text-lg font-medium text-brand-dark dark:text-gray-200 mb-2"
         >
           {t('analysis.uploadLabel')}
         </label>
@@ -364,20 +364,20 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
             type="button"
             onClick={startCamera}
             disabled={isLoading || showCamera}
-            className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-brand-secondary text-white text-sm sm:text-base font-medium rounded-lg hover:bg-sky-600 focus:outline-none focus:ring-4 focus:ring-sky-300 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
+            className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-brand-secondary text-white text-xs sm:text-sm md:text-base font-medium rounded-lg hover:bg-sky-600 focus:outline-none focus:ring-4 focus:ring-sky-300 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
           >
             <CameraIcon className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="hidden xs:inline">Take Photo</span>
-            <span className="xs:hidden">Camera</span>
+            <span className="hidden sm:inline">Take Photo</span>
+            <span className="sm:hidden">Camera</span>
           </button>
         </div>
         <div
-          className="flex justify-center items-center w-full px-6 py-10 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-800/50 hover:border-brand-secondary dark:hover:border-brand-secondary transition-colors cursor-pointer"
+          className="flex justify-center items-center w-full px-4 sm:px-6 py-8 sm:py-10 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-800/50 hover:border-brand-secondary dark:hover:border-brand-secondary transition-colors cursor-pointer"
           onClick={() => fileInputRef.current?.click()}
         >
           <div className="text-center">
-            <UploadIcon className="mx-auto h-12 w-12 text-gray-400" />
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <UploadIcon className="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-gray-400" />
+            <p className="mt-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
               <span className="font-semibold text-brand-secondary">
                 {t('analysis.browse')}
               </span>{" "}
@@ -385,7 +385,7 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-500">PDF, DOCX, PNG, JPG</p>
             {selectedFile && (
-              <p className="mt-4 text-sm font-medium text-brand-dark dark:text-gray-300">
+              <p className="mt-3 sm:mt-4 text-xs sm:text-sm font-medium text-brand-dark dark:text-gray-300 break-all px-2">
                 {selectedFile.name}
               </p>
             )}
@@ -404,15 +404,15 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
 
       {/* Camera Modal */}
       {showCamera && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-2 sm:p-4">
-          <div className="relative bg-white dark:bg-slate-800 rounded-lg p-2 sm:p-4 max-w-4xl w-full h-full sm:h-auto flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-0 sm:p-2 md:p-4">
+          <div className="relative bg-white dark:bg-slate-800 rounded-none sm:rounded-lg p-2 sm:p-4 max-w-4xl w-full h-full sm:h-auto flex flex-col">
             <button
               onClick={stopCamera}
               className="absolute top-2 right-2 sm:top-4 sm:right-4 z-50 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 bg-white dark:bg-slate-800 rounded-full shadow-lg"
             >
               <XIcon className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
-            <div className="mt-6 sm:mt-8 relative bg-black rounded-lg overflow-hidden flex-1" style={{ minHeight: '300px' }}>
+            <div className="mt-8 sm:mt-6 md:mt-8 relative bg-black rounded-lg overflow-hidden flex-1" style={{ minHeight: '250px', maxHeight: 'calc(100vh - 150px)' }}>
               <video
                 ref={videoRef}
                 autoPlay
@@ -420,8 +420,8 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
                 muted
                 className="w-full h-full object-contain"
                 style={{ 
-                  maxHeight: 'calc(100vh - 200px)',
-                  minHeight: '300px',
+                  maxHeight: 'calc(100vh - 150px)',
+                  minHeight: '250px',
                   display: 'block',
                   backgroundColor: '#000'
                 }}
@@ -434,23 +434,23 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
               {!stream && (
                 <div className="absolute inset-0 flex items-center justify-center bg-gray-900 text-white z-10">
                   <div className="text-center">
-                    <CameraIcon className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 text-gray-400" />
-                    <p className="text-sm sm:text-base">Starting camera...</p>
+                    <CameraIcon className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 mx-auto mb-4 text-gray-400" />
+                    <p className="text-xs sm:text-sm md:text-base">Starting camera...</p>
                   </div>
                 </div>
               )}
               <canvas ref={canvasRef} className="hidden" />
             </div>
-            <div className="mt-4 flex justify-center gap-3 sm:gap-4 pb-2 sm:pb-0">
+            <div className="mt-3 sm:mt-4 flex justify-center gap-2 sm:gap-3 md:gap-4 pb-3 sm:pb-2 md:pb-0">
               <button
                 onClick={capturePhoto}
-                className="flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-3 bg-brand-secondary text-white text-sm sm:text-base font-bold rounded-lg shadow-md hover:bg-sky-600 focus:outline-none focus:ring-4 focus:ring-sky-300 transition-all"
+                className="flex-1 sm:flex-none px-4 sm:px-6 py-2.5 sm:py-3 bg-brand-secondary text-white text-xs sm:text-sm md:text-base font-bold rounded-lg shadow-md hover:bg-sky-600 focus:outline-none focus:ring-4 focus:ring-sky-300 transition-all"
               >
                 Capture Photo
               </button>
               <button
                 onClick={stopCamera}
-                className="flex-1 sm:flex-none px-4 sm:px-6 py-2 sm:py-3 bg-gray-500 text-white text-sm sm:text-base font-bold rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-300 transition-all"
+                className="flex-1 sm:flex-none px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-500 text-white text-xs sm:text-sm md:text-base font-bold rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-300 transition-all"
               >
                 Cancel
               </button>
@@ -463,7 +463,7 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
         <button
           onClick={handleAnalyze}
           disabled={isLoading || !selectedFile}
-          className="px-8 py-3 bg-brand-secondary text-white font-bold rounded-lg shadow-md hover:bg-sky-600 focus:outline-none focus:ring-4 focus:ring-sky-300 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-300 ease-in-out transform hover:scale-105"
+          className="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 bg-brand-secondary text-white text-sm sm:text-base font-bold rounded-lg shadow-md hover:bg-sky-600 focus:outline-none focus:ring-4 focus:ring-sky-300 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-300 ease-in-out transform hover:scale-105"
         >
           {isLoading ? "..." : t('analysis.analyze')}
         </button>
@@ -484,24 +484,24 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
       )}
 
       {analysisResult && (
-        <div className="space-y-6 animate-fade-in">
-          <div className="p-6 bg-white dark:bg-slate-800 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-brand-dark dark:text-white mb-3">{t('analysis.section.summary')}</h2>
+        <div className="space-y-4 sm:space-y-6 animate-fade-in">
+          <div className="p-4 sm:p-6 bg-white dark:bg-slate-800 rounded-lg shadow-md">
+            <h2 className="text-xl sm:text-2xl font-bold text-brand-dark dark:text-white mb-3">{t('analysis.section.summary')}</h2>
 
             {/* Info row: Legal? Authenticity? */}
-            <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <div className="flex items-center space-x-3">
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">&nbsp;</span>
+            <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <span className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-300">&nbsp;</span>
                 <BadgeLegal analysis={analysisResult} />
               </div>
 
-              <div className="flex items-center space-x-3">
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-300">&nbsp;</span>
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <span className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-300">&nbsp;</span>
                 <BadgeAuthenticity analysis={analysisResult} />
               </div>
             </div>
 
-            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+            <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
               {analysisResult.summary}
             </p>
             {/* Explicit authenticity section */}
@@ -521,26 +521,26 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <AnalysisSection
               title={t('analysis.section.pros')}
               items={analysisResult.pros}
-              icon={<ShieldCheckIcon className="w-6 h-6 text-green-500" />}
+              icon={<ShieldCheckIcon className="w-5 h-5 sm:w-6 sm:h-6 text-green-500" />}
             />
             <AnalysisSection
               title={t('analysis.section.cons')}
               items={analysisResult.cons}
-              icon={<ExclamationCircleIcon className="w-6 h-6 text-red-500" />}
+              icon={<ExclamationCircleIcon className="w-5 h-5 sm:w-6 sm:h-6 text-red-500" />}
             />
             <AnalysisSection
               title={t('analysis.section.loopholes')}
               items={analysisResult.potentialLoopholes}
-              icon={<LightbulbIcon className="w-6 h-6 text-yellow-500" />}
+              icon={<LightbulbIcon className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" />}
             />
             <AnalysisSection
               title={t('analysis.section.challenges')}
               items={analysisResult.potentialChallenges}
-              icon={<BalanceScaleIcon className="w-6 h-6 text-blue-500" />}
+              icon={<BalanceScaleIcon className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />}
             />
           </div>
 

@@ -32,24 +32,24 @@ const Login = ({ onLoginSuccess, onSwitchToRegister }: LoginProps) => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900 px-4">
-            <div className="max-w-md w-full bg-white dark:bg-slate-800 rounded-lg shadow-lg p-8">
-                <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-brand-primary dark:text-white">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-900 px-4 py-8">
+            <div className="max-w-md w-full bg-white dark:bg-slate-800 rounded-lg shadow-lg p-6 sm:p-8">
+                <div className="text-center mb-6 sm:mb-8">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-brand-primary dark:text-white">
                         Lexi<span className="text-brand-secondary">Gem</span>
                     </h1>
-                    <p className="mt-2 text-gray-600 dark:text-gray-400">Welcome back</p>
+                    <p className="mt-2 text-sm sm:text-base text-gray-600 dark:text-gray-400">Welcome back</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                     {error && (
-                        <div className="p-3 bg-red-100 text-red-700 border border-red-300 rounded-lg dark:bg-red-900/20 dark:border-red-700 dark:text-red-300 text-sm">
+                        <div className="p-3 bg-red-100 text-red-700 border border-red-300 rounded-lg dark:bg-red-900/20 dark:border-red-700 dark:text-red-300 text-xs sm:text-sm break-words">
                             {error}
                         </div>
                     )}
 
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">
                             Email
                         </label>
                         <input
@@ -58,13 +58,13 @@ const Login = ({ onLoginSuccess, onSwitchToRegister }: LoginProps) => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-brand-secondary focus:border-transparent dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-brand-secondary focus:border-transparent dark:bg-slate-700 dark:text-white"
                             placeholder="your@email.com"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label htmlFor="password" className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">
                             Password
                         </label>
                         <input
@@ -73,7 +73,7 @@ const Login = ({ onLoginSuccess, onSwitchToRegister }: LoginProps) => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-brand-secondary focus:border-transparent dark:bg-slate-700 dark:text-white"
+                            className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-brand-secondary focus:border-transparent dark:bg-slate-700 dark:text-white"
                             placeholder="••••••••"
                         />
                     </div>
@@ -81,14 +81,14 @@ const Login = ({ onLoginSuccess, onSwitchToRegister }: LoginProps) => {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full px-4 py-2 bg-brand-secondary text-white font-semibold rounded-lg hover:bg-sky-600 focus:outline-none focus:ring-4 focus:ring-sky-300 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
+                        className="w-full px-4 py-2.5 sm:py-3 bg-brand-secondary text-white text-sm sm:text-base font-semibold rounded-lg hover:bg-sky-600 focus:outline-none focus:ring-4 focus:ring-sky-300 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
                     >
                         {isLoading ? 'Signing in...' : 'Sign In'}
                     </button>
                 </form>
 
-                <div className="mt-6 text-center">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                <div className="mt-4 sm:mt-6 text-center">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                         Don't have an account?{' '}
                         <button
                             onClick={onSwitchToRegister}

@@ -232,14 +232,14 @@ const LegalQA = ({ userId, loadSessionId, onSessionLoaded }: LegalQAProps) => {
     }
 
     return (
-        <div className="flex flex-col h-[85vh] sm:h-[80vh] p-2 sm:p-4 md:p-6 bg-gray-50 dark:bg-slate-900">
+        <div className="flex flex-col h-[85vh] sm:h-[80vh] p-2 sm:p-3 md:p-4 lg:p-6 bg-gray-50 dark:bg-slate-900">
             {/* Optional: choose a document to provide context to the AI */}
             {documents.length > 0 && (
                 <div className="mb-2 sm:mb-3">
                     <select
                         value={selectedDocumentId}
                         onChange={(e) => setSelectedDocumentId(e.target.value)}
-                        className="w-full p-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-brand-secondary focus:border-brand-secondary bg-white dark:bg-slate-800 dark:text-gray-200"
+                        className="w-full p-2 text-xs sm:text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-brand-secondary focus:border-brand-secondary bg-white dark:bg-slate-800 dark:text-gray-200"
                     >
                         <option value="">{`Select a document to reference (optional)`}</option>
                         {documents.map((doc) => (
@@ -251,17 +251,17 @@ const LegalQA = ({ userId, loadSessionId, onSessionLoaded }: LegalQAProps) => {
                     {selectedDocumentId && (
                         <div className="mt-2 p-2 bg-gray-100 dark:bg-slate-700 rounded-lg text-xs sm:text-sm">
                             <p className="font-medium">Selected document summary:</p>
-                            <p className="text-gray-600 dark:text-gray-300">
+                            <p className="text-gray-600 dark:text-gray-300 break-words">
                                 {documents.find(d => d.id === selectedDocumentId)?.summary}
                             </p>
                         </div>
                     )}
                 </div>
             )}
-            <div ref={chatContainerRef} className="flex-1 overflow-y-auto space-y-3 sm:space-y-4 p-2 sm:p-4 rounded-lg bg-white dark:bg-slate-800 shadow-inner">
+            <div ref={chatContainerRef} className="flex-1 overflow-y-auto space-y-2 sm:space-y-3 md:space-y-4 p-2 sm:p-3 md:p-4 rounded-lg bg-white dark:bg-slate-800 shadow-inner">
                 {messages.map((msg, index) => (
                     <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-[85%] sm:max-w-xl p-2 sm:p-3 rounded-2xl whitespace-pre-wrap text-sm sm:text-base ${msg.role === 'user' ? 'bg-brand-secondary text-white rounded-br-none' : 'bg-gray-200 dark:bg-slate-700 text-brand-dark dark:text-gray-200 rounded-bl-none'}`}>
+                        <div className={`max-w-[90%] sm:max-w-[85%] md:max-w-xl p-2 sm:p-3 rounded-2xl whitespace-pre-wrap text-xs sm:text-sm md:text-base break-words ${msg.role === 'user' ? 'bg-brand-secondary text-white rounded-br-none' : 'bg-gray-200 dark:bg-slate-700 text-brand-dark dark:text-gray-200 rounded-bl-none'}`}>
                             {msg.parts[0].text}
                             {msg.role === 'model' && msg.parts[0].text.includes("does not constitute legal advice") && <Disclaimer/>}
                         </div>
@@ -269,7 +269,7 @@ const LegalQA = ({ userId, loadSessionId, onSessionLoaded }: LegalQAProps) => {
                 ))}
                  {isLoading && messages[messages.length-1]?.role === 'user' && (
                     <div className="flex justify-start">
-                        <div className="max-w-[85%] sm:max-w-xl p-2 sm:p-3 rounded-2xl bg-gray-200 dark:bg-slate-700 text-brand-dark dark:text-gray-200 rounded-bl-none">
+                        <div className="max-w-[90%] sm:max-w-[85%] md:max-w-xl p-2 sm:p-3 rounded-2xl bg-gray-200 dark:bg-slate-700 text-brand-dark dark:text-gray-200 rounded-bl-none">
                             <div className="flex items-center space-x-2">
                                 <span className="h-2 w-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
                                 <span className="h-2 w-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
@@ -280,30 +280,30 @@ const LegalQA = ({ userId, loadSessionId, onSessionLoaded }: LegalQAProps) => {
                 )}
                  {!messages.length && (
                     <div className="text-center text-gray-500 dark:text-gray-400 px-2">
-                        <p className="text-sm sm:text-base">{t('qa.empty.line1')}</p>
+                        <p className="text-xs sm:text-sm md:text-base">{t('qa.empty.line1')}</p>
                         <p className="text-xs sm:text-sm mt-2">{t('qa.empty.line2')}</p>
                     </div>
                  )}
             </div>
             <Disclaimer />
             
-            {error && <div className="mt-2 p-2 text-xs sm:text-sm bg-red-100 text-red-700 rounded-lg">{error}</div>}
+            {error && <div className="mt-2 p-2 text-xs sm:text-sm bg-red-100 text-red-700 rounded-lg break-words">{error}</div>}
 
-            <form onSubmit={handleSendMessage} className="mt-2 sm:mt-4 flex items-center space-x-2">
+            <form onSubmit={handleSendMessage} className="mt-2 sm:mt-3 md:mt-4 flex items-center space-x-2">
                 <input
                     type="text"
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
                     placeholder={t('qa.placeholder')}
-                    className="flex-1 p-2 sm:p-3 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-full shadow-sm focus:ring-2 focus:ring-brand-secondary focus:border-brand-secondary transition duration-150 bg-white dark:bg-slate-800 dark:text-gray-200"
+                    className="flex-1 p-2 sm:p-2.5 md:p-3 text-xs sm:text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-full shadow-sm focus:ring-2 focus:ring-brand-secondary focus:border-brand-secondary transition duration-150 bg-white dark:bg-slate-800 dark:text-gray-200"
                     disabled={isLoading}
                 />
                 <button
                     type="submit"
                     disabled={isLoading || !userInput.trim()}
-                    className="p-2 sm:p-3 bg-brand-secondary text-white rounded-full hover:bg-sky-600 focus:outline-none focus:ring-4 focus:ring-sky-300 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+                    className="p-2 sm:p-2.5 md:p-3 bg-brand-secondary text-white rounded-full hover:bg-sky-600 focus:outline-none focus:ring-4 focus:ring-sky-300 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex-shrink-0"
                 >
-                    <SendIcon className="h-5 w-5 sm:h-6 sm:w-6" />
+                    <SendIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
                 </button>
             </form>
         </div>
