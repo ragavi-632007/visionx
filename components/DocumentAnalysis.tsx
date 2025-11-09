@@ -11,6 +11,8 @@ import {
   LightbulbIcon,
   BalanceScaleIcon,
   UploadIcon,
+  CameraIcon,
+  XIcon,
 } from "./icons";
 
 const AnalysisSection = ({
@@ -158,7 +160,11 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
+  const [stream, setStream] = useState<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const { t, language, languageNames } = useLanguage();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -167,12 +173,105 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
     }
   };
 
-  const handleAnalyze = async () => {
-    if (!selectedFile) {
+  // Camera functionality
+  const startCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { 
+          facingMode: 'environment', // Use back camera on mobile
+          width: { ideal: 1920 },
+          height: { ideal: 1080 }
+        }
+      });
+      setStream(mediaStream);
+      setShowCamera(true);
+    } catch (err) {
+      console.error('Error accessing camera:', err);
+      setError('Unable to access camera. Please check permissions or use file upload instead.');
+    }
+  };
+
+  // Set video stream when camera modal opens
+  React.useEffect(() => {
+    if (showCamera && stream && videoRef.current) {
+      videoRef.current.srcObject = stream;
+      videoRef.current.play().catch(err => {
+        console.error('Error playing video:', err);
+        setError('Error starting camera feed. Please try again.');
+      });
+    }
+    return () => {
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
+    };
+  }, [showCamera, stream]);
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+    setShowCamera(false);
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  };
+
+  const capturePhoto = async () => {
+    if (!videoRef.current || !canvasRef.current) {
+      setError('Camera not ready. Please wait a moment and try again.');
+      return;
+    }
+
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+
+    if (!context) {
+      setError('Unable to capture photo. Please try again.');
+      return;
+    }
+
+    // Check if video is ready
+    if (video.videoWidth === 0 || video.videoHeight === 0) {
+      setError('Camera feed not ready. Please wait a moment and try again.');
+      return;
+    }
+
+    // Set canvas dimensions to match video
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Draw video frame to canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Convert canvas to blob, then to File
+    canvas.toBlob((blob) => {
+      if (blob) {
+        const fileName = `camera-document-${Date.now()}.jpg`;
+        const file = new File([blob], fileName, { type: 'image/jpeg' });
+        setSelectedFile(file);
+        stopCamera();
+        
+        // Automatically start analysis after capture
+        setTimeout(() => {
+          handleAnalyzeWithFile(file);
+        }, 100);
+      } else {
+        setError('Failed to capture photo. Please try again.');
+      }
+    }, 'image/jpeg', 0.95);
+  };
+
+  // Separate analyze function that accepts a file parameter
+  const handleAnalyzeWithFile = async (file: File) => {
+    if (!file) {
       setError(t('analysis.error.noFile'));
       return;
     }
-    // Basic validation to reduce model failures
+    
+    // Basic validation
     const allowedTypes = [
       'application/pdf',
       'application/msword',
@@ -181,15 +280,16 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
       'image/jpeg',
       'image/webp'
     ];
-    if (!allowedTypes.includes(selectedFile.type)) {
+    if (!allowedTypes.includes(file.type)) {
       setError('Unsupported file type. Please upload PDF, DOCX, PNG, or JPG.');
       return;
     }
-    const maxBytes = 12 * 1024 * 1024; // ~12MB to keep request size reasonable
-    if (selectedFile.size > maxBytes) {
+    const maxBytes = 12 * 1024 * 1024; // ~12MB
+    if (file.size > maxBytes) {
       setError('File too large. Please upload a file smaller than 12MB.');
       return;
     }
+    
     setIsLoading(true);
     setError(null);
     setAnalysisResult(null);
@@ -197,18 +297,18 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
 
     try {
       // Step 1: Analyze document with Gemini
-      const result = await analyzeDocument(selectedFile, languageNames[language]);
+      const result = await analyzeDocument(file, languageNames[language]);
       setAnalysisResult(result);
 
       // Step 2: Upload file to Supabase Storage
-      const fileUrl = await documentService.uploadFile(selectedFile, userId);
+      const fileUrl = await documentService.uploadFile(file, userId);
 
       // Step 3: Save document and analysis to database
       await documentService.saveDocument({
         userId,
-        fileName: selectedFile.name,
-        fileType: selectedFile.type || "application/octet-stream",
-        fileSize: selectedFile.size,
+        fileName: file.name,
+        fileType: file.type || "application/octet-stream",
+        fileSize: file.size,
         fileUrl,
         summary: result.summary,
         pros: result.pros,
@@ -220,13 +320,11 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
       setSaveSuccess(true);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
-      // Don't show API key errors or service unavailable errors to the user - handle silently
       if (!errorMessage.includes('API key') && 
           !errorMessage.includes('Missing API key') && 
           errorMessage !== 'SERVICE_UNAVAILABLE') {
         setError(errorMessage);
       } else {
-        // Silently handle API key errors - just log to console
         console.error('Service unavailable. Please check configuration.');
         setError(null);
       }
@@ -234,6 +332,23 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
       setIsLoading(false);
     }
   };
+
+  const handleAnalyze = async () => {
+    if (!selectedFile) {
+      setError(t('analysis.error.noFile'));
+      return;
+    }
+    await handleAnalyzeWithFile(selectedFile);
+  };
+
+  // Cleanup camera stream on unmount
+  React.useEffect(() => {
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [stream]);
 
   return (
     <div className="p-4 md:p-6 space-y-6">
@@ -244,6 +359,17 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
         >
           {t('analysis.uploadLabel')}
         </label>
+        <div className="flex gap-3 mb-3">
+          <button
+            type="button"
+            onClick={startCamera}
+            disabled={isLoading || showCamera}
+            className="flex items-center gap-2 px-4 py-2 bg-brand-secondary text-white font-medium rounded-lg hover:bg-sky-600 focus:outline-none focus:ring-4 focus:ring-sky-300 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
+          >
+            <CameraIcon className="w-5 h-5" />
+            Take Photo
+          </button>
+        </div>
         <div
           className="flex justify-center items-center w-full px-6 py-10 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-slate-800/50 hover:border-brand-secondary dark:hover:border-brand-secondary transition-colors cursor-pointer"
           onClick={() => fileInputRef.current?.click()}
@@ -274,6 +400,63 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
           disabled={isLoading}
         />
       </div>
+
+      {/* Camera Modal */}
+      {showCamera && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
+          <div className="relative bg-white dark:bg-slate-800 rounded-lg p-4 max-w-4xl w-full mx-4">
+            <button
+              onClick={stopCamera}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            >
+              <XIcon className="w-6 h-6" />
+            </button>
+            <div className="mt-8 relative bg-black rounded-lg overflow-hidden" style={{ minHeight: '400px' }}>
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full h-full object-contain"
+                style={{ 
+                  maxHeight: '70vh',
+                  minHeight: '400px',
+                  display: 'block',
+                  backgroundColor: '#000'
+                }}
+                onLoadedMetadata={() => {
+                  if (videoRef.current) {
+                    videoRef.current.play().catch(console.error);
+                  }
+                }}
+              />
+              {!stream && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-900 text-white z-10">
+                  <div className="text-center">
+                    <CameraIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                    <p>Starting camera...</p>
+                  </div>
+                </div>
+              )}
+              <canvas ref={canvasRef} className="hidden" />
+            </div>
+            <div className="mt-4 flex justify-center gap-4">
+              <button
+                onClick={capturePhoto}
+                className="px-6 py-3 bg-brand-secondary text-white font-bold rounded-lg shadow-md hover:bg-sky-600 focus:outline-none focus:ring-4 focus:ring-sky-300 transition-all"
+              >
+                Capture Photo
+              </button>
+              <button
+                onClick={stopCamera}
+                className="px-6 py-3 bg-gray-500 text-white font-bold rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-300 transition-all"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="text-center">
         <button
