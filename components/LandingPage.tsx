@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../i18n/LanguageProvider';
 import LanguageSwitcher from './LanguageSwitcher';
-import { ArrowRightIcon } from './icons';
+import { ArrowRightIcon, LightningIcon, ShieldIcon, CheckCircleIcon, PlayIcon, DocumentIcon, SparkleIcon } from './icons';
 import Login from './Login';
 import Register from './Register';
 
@@ -23,47 +23,149 @@ const LandingPage = ({ onLogin }: LandingPageProps) => {
     }
 
     return (
-        <div className="flex flex-col justify-center items-center min-h-screen bg-gray-50 dark:bg-slate-900 text-center p-4 relative">
-            <header className="absolute top-0 left-0 right-0 p-3 sm:p-4 md:px-8 md:py-6 flex justify-between items-center">
-                <div className="text-lg sm:text-xl font-bold text-brand-primary dark:text-white">
-                    Lexi<span className="text-brand-secondary">Gem</span>
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+            {/* Header */}
+            <header className="relative z-10 p-4 sm:p-6 md:px-8 md:py-6 flex justify-between items-center">
+                <div className="text-xl sm:text-2xl font-bold text-white">
+                    Lexi<span className="text-sky-400">Gem</span>
                 </div>
                 <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
                     <LanguageSwitcher />
                     <button
                         onClick={() => setShowLogin(true)}
-                        className="px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-brand-primary dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-slate-800 transition-colors"
+                        className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-white hover:text-sky-300 transition-colors"
                     >
                         {t('common.login')}
                     </button>
                     <button
                         onClick={() => setShowRegister(true)}
-                        className="px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                        className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-white bg-sky-500 hover:bg-sky-600 rounded-lg transition-colors"
                     >
                         {t('common.signup')}
                     </button>
                 </div>
             </header>
 
-            
-            <main className="flex flex-col justify-center items-center px-2 sm:px-4 mt-16 sm:mt-0">
-                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-brand-primary dark:text-white max-w-4xl leading-tight">
-                    Ready to Understand Your Legal Documents?
-                </h1>
-                <p className="mt-3 sm:mt-4 text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl px-2">
-                    Join thousands of users who trust LexiGem for clear, AI-powered legal insights.
-                </p>
-                <button
-                    onClick={onLogin}
-                    className="mt-6 sm:mt-10 px-6 sm:px-8 py-3 sm:py-4 bg-blue-600 text-white text-sm sm:text-base font-bold rounded-lg shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center"
-                >
-                    Start Analyzing Now
-                    <ArrowRightIcon className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
-                </button>
-                <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                    No credit card required • Free to start
-                </p>
+            {/* Hero Section */}
+            <main className="relative z-10 px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">
+                <div className="max-w-6xl mx-auto">
+                    {/* Badge */}
+                    <div className="flex justify-center mb-6 sm:mb-8">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-sky-500/20 backdrop-blur-sm border border-sky-400/30 rounded-full">
+                            <LightningIcon className="w-4 h-4 text-sky-400" />
+                            <span className="text-sm sm:text-base font-medium text-sky-300">AI-Powered Legal Intelligence</span>
+                        </div>
+                    </div>
+
+                    {/* Main Headline */}
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white text-center mb-6 sm:mb-8 leading-tight">
+                        Decode Your Legal Documents in <span className="text-sky-400">Seconds</span>
+                    </h1>
+
+                    {/* Description */}
+                    <p className="text-lg sm:text-xl md:text-2xl text-gray-200 text-center max-w-3xl mx-auto mb-8 sm:mb-12 leading-relaxed">
+                        Stop struggling with complex legal language. LexiGem uses advanced AI to transform confusing contracts into clear, actionable insights.
+                    </p>
+
+                    {/* CTA Buttons */}
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 sm:mb-12">
+                        <button
+                            onClick={() => setShowLogin(true)}
+                            className="w-full sm:w-auto px-8 py-4 bg-white text-slate-900 text-base sm:text-lg font-bold rounded-xl shadow-2xl hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-white/50 transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center"
+                        >
+                            Start Analyzing Free
+                            <ArrowRightIcon className="w-5 h-5 ml-2" />
+                        </button>
+                        <button
+                            className="w-full sm:w-auto px-8 py-4 bg-transparent border-2 border-white/30 text-white text-base sm:text-lg font-semibold rounded-xl hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-white/30 transition-all duration-300 flex items-center justify-center"
+                        >
+                            <PlayIcon className="w-5 h-5 mr-2" />
+                            Watch Demo
+                        </button>
+                    </div>
+
+                    {/* Features */}
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-16 sm:mb-20">
+                        <div className="flex items-center gap-2 text-white">
+                            <CheckCircleIcon className="w-5 h-5 text-green-400" />
+                            <span className="text-sm sm:text-base">No credit card required</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-white">
+                            <CheckCircleIcon className="w-5 h-5 text-green-400" />
+                            <span className="text-sm sm:text-base">Free to start</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Why Choose LexiGem Section */}
+                <div className="max-w-7xl mx-auto mt-20 sm:mt-32">
+                    <div className="text-center mb-12 sm:mb-16">
+                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
+                            Why Choose LexiGem?
+                        </h2>
+                        <p className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto">
+                            Powerful features designed to simplify your legal document review.
+                        </p>
+                    </div>
+
+                    {/* Feature Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 px-4">
+                        {/* AI-Powered Analysis */}
+                        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 sm:p-8 hover:bg-white/15 transition-all duration-300 transform hover:scale-105">
+                            <div className="w-14 h-14 bg-sky-500/30 rounded-xl flex items-center justify-center mb-6">
+                                <SparkleIcon className="w-8 h-8 text-sky-300" />
+                            </div>
+                            <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
+                                AI-Powered Analysis
+                            </h3>
+                            <p className="text-gray-300 text-base sm:text-lg">
+                                Advanced AI breaks down complex legal jargon
+                            </p>
+                        </div>
+
+                        {/* Secure & Private */}
+                        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 sm:p-8 hover:bg-white/15 transition-all duration-300 transform hover:scale-105">
+                            <div className="w-14 h-14 bg-sky-500/30 rounded-xl flex items-center justify-center mb-6">
+                                <ShieldIcon className="w-8 h-8 text-sky-300" />
+                            </div>
+                            <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
+                                Secure & Private
+                            </h3>
+                            <p className="text-gray-300 text-base sm:text-lg">
+                                Your documents are encrypted and protected
+                            </p>
+                        </div>
+
+                        {/* Instant Results */}
+                        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 sm:p-8 hover:bg-white/15 transition-all duration-300 transform hover:scale-105">
+                            <div className="w-14 h-14 bg-sky-500/30 rounded-xl flex items-center justify-center mb-6">
+                                <LightningIcon className="w-8 h-8 text-sky-300" />
+                            </div>
+                            <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">
+                                Instant Results
+                            </h3>
+                            <p className="text-gray-300 text-base sm:text-lg">
+                                Get insights in seconds, not hours
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </main>
+
+            {/* Footer */}
+            <footer className="relative z-10 bg-slate-950/50 backdrop-blur-sm border-t border-white/10 mt-20 sm:mt-32 py-8 sm:py-12">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                            <DocumentIcon className="w-8 h-8 text-white" />
+                            <span className="text-xl sm:text-2xl font-bold text-white">LexiGem</span>
+                        </div>
+                        <p className="text-gray-400 text-sm sm:text-base text-center sm:text-right">
+                            Simplifying legal documents with AI-powered insights
+                        </p>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 };
