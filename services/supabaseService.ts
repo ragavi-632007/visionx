@@ -7,11 +7,14 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_API_KEY;
 
 if (!supabaseUrl) {
-    throw new Error("SUPABASE_URL environment variable not set");
+    console.error('Missing VITE_SUPABASE_URL. Available env vars:', Object.keys(import.meta.env).filter(k => k.includes('SUPABASE')));
+    throw new Error("VITE_SUPABASE_URL environment variable not set. Please add it in Vercel with the VITE_ prefix.");
 }
 
 if (!supabaseKey) {
-    throw new Error("SUPABASE_API_KEY environment variable not set");
+    console.error('Missing Supabase key. Looking for VITE_SUPABASE_ANON_KEY or VITE_SUPABASE_API_KEY');
+    console.error('Available env vars:', Object.keys(import.meta.env).filter(k => k.includes('SUPABASE')));
+    throw new Error("VITE_SUPABASE_ANON_KEY or VITE_SUPABASE_API_KEY environment variable not set. Please add it in Vercel with the VITE_ prefix.");
 }
 
 export const supabase = createClient(
