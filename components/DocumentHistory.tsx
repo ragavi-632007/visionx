@@ -58,14 +58,14 @@ const DocumentHistory = ({ userId }: DocumentHistoryProps) => {
             const docs = await documentService.getUserDocuments(userId);
             setDocuments(docs as Document[]);
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Failed to load documents');
+            setError(err instanceof Error ? err.message : 'Failed to load document');
         } finally {
             setIsLoading(false);
         }
     };
 
     const handleDelete = async (docId: string) => {
-        if (!confirm('Are you sure you want to delete this document?')) {
+        if (!confirm('Are you sure you want to delete this documents?')) {
             return;
         }
 
