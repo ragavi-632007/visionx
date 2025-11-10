@@ -5,6 +5,7 @@ import type { AnalysisResult } from "../types";
 import LoadingSpinner from "./LoadingSpinner";
 import Disclaimer from "./Disclaimer";
 import { useLanguage } from "../i18n/LanguageProvider";
+import { isPasswordProtected, convertPdfToImages } from "../utils/pdfPasswordHandler";
 import {
   ShieldCheckIcon,
   ExclamationCircleIcon,
@@ -162,9 +163,14 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
   const { t, language, languageNames } = useLanguage();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -265,7 +271,7 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
   };
 
   // Separate analyze function that accepts a file parameter
-  const handleAnalyzeWithFile = async (file: File) => {
+  const handleAnalyzeWithFile = async (file: File, providedPassword?: string) => {
     if (!file) {
       setError(t('analysis.error.noFile'));
       return;
@@ -290,17 +296,64 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
       return;
     }
     
+    // Check if PDF is password-protected BEFORE attempting analysis
+    if (file.type === 'application/pdf' && !providedPassword) {
+      try {
+        console.log('Checking if PDF is password-protected...');
+        setIsLoading(true); // Show loading while checking
+        const isProtected = await isPasswordProtected(file);
+        console.log('PDF password protection check result:', isProtected);
+        if (isProtected) {
+          // Show password prompt
+          setIsLoading(false);
+          setPendingFile(file);
+          setShowPasswordPrompt(true);
+          setPassword("");
+          setPasswordError(null);
+          // Focus password input when modal opens
+          setTimeout(() => passwordInputRef.current?.focus(), 100);
+          return;
+        }
+        setIsLoading(false); // Reset loading if not protected
+      } catch (err) {
+        console.error('Error checking PDF password protection:', err);
+        setIsLoading(false);
+        // Continue with analysis if check fails - might not be password protected
+        // But log the error for debugging
+      }
+    }
+    
     setIsLoading(true);
     setError(null);
     setAnalysisResult(null);
     setSaveSuccess(false);
+    setShowPasswordPrompt(false);
 
     try {
+      let filesToAnalyze: File | File[] = file;
+      
+      // If password was provided, convert PDF to images
+      if (file.type === 'application/pdf' && providedPassword) {
+        try {
+          const imageFiles = await convertPdfToImages(file, providedPassword);
+          filesToAnalyze = imageFiles;
+        } catch (err: any) {
+          const errorMessage = err instanceof Error ? err.message : "Failed to decrypt PDF.";
+          if (errorMessage.includes('Invalid password') || errorMessage.includes('password')) {
+            setPasswordError(errorMessage);
+            setShowPasswordPrompt(true);
+            setIsLoading(false);
+            return;
+          }
+          throw err;
+        }
+      }
+      
       // Step 1: Analyze document with Gemini
-      const result = await analyzeDocument(file, languageNames[language]);
+      const result = await analyzeDocument(filesToAnalyze, languageNames[language]);
       setAnalysisResult(result);
 
-      // Step 2: Upload file to Supabase Storage
+      // Step 2: Upload file to Supabase Storage (upload original file, not images)
       const fileUrl = await documentService.uploadFile(file, userId);
 
       // Step 3: Save document and analysis to database
@@ -318,8 +371,30 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
       });
 
       setSaveSuccess(true);
+      setPassword(""); // Clear password after successful analysis
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
+      
+      // Check if error might be due to password-protected PDF
+      // If we haven't checked for password yet and it's a PDF, try checking now
+      if (file.type === 'application/pdf' && !providedPassword) {
+        try {
+          const isProtected = await isPasswordProtected(file);
+          if (isProtected) {
+            // Show password prompt
+            setPendingFile(file);
+            setShowPasswordPrompt(true);
+            setPassword("");
+            setPasswordError(null);
+            setIsLoading(false);
+            setTimeout(() => passwordInputRef.current?.focus(), 100);
+            return;
+          }
+        } catch (checkErr) {
+          console.error('Error checking PDF password protection:', checkErr);
+        }
+      }
+      
       if (!errorMessage.includes('API key') && 
           !errorMessage.includes('Missing API key') && 
           errorMessage !== 'SERVICE_UNAVAILABLE') {
@@ -331,6 +406,25 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pendingFile || !password.trim()) {
+      setPasswordError('Please enter a password');
+      return;
+    }
+    
+    setPasswordError(null);
+    await handleAnalyzeWithFile(pendingFile, password.trim());
+  };
+
+  const handlePasswordCancel = () => {
+    setShowPasswordPrompt(false);
+    setPendingFile(null);
+    setPassword("");
+    setPasswordError(null);
+    setIsLoading(false);
   };
 
   const handleAnalyze = async () => {
@@ -455,6 +549,80 @@ const DocumentAnalysis = ({ userId }: DocumentAnalysisProps) => {
                 Cancel
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Password Prompt Modal */}
+      {showPasswordPrompt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4">
+          <div className="relative bg-white dark:bg-slate-800 rounded-lg p-6 max-w-md w-full shadow-xl">
+            <button
+              onClick={handlePasswordCancel}
+              className="absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            >
+              <XIcon className="w-5 h-5" />
+            </button>
+            <h2 className="text-xl font-bold text-brand-dark dark:text-white mb-4">
+              Password Required
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+              This PDF is password-protected. Please enter the password to continue.
+            </p>
+            
+            {/* Aadhaar Password Helper */}
+            <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <p className="text-xs font-semibold text-blue-900 dark:text-blue-200 mb-2">
+                For eAadhaar PDFs:
+              </p>
+              <ul className="text-xs text-blue-800 dark:text-blue-300 space-y-1 list-disc list-inside">
+                <li>Password is 7-8 characters long</li>
+                <li>If name has more than 3 letters: First 4 letters + Year of birth (e.g., ANIS1989)</li>
+                <li>If name has 3 letters: First 3 letters + Year of birth (e.g., RIA1989)</li>
+              </ul>
+            </div>
+
+            <form onSubmit={handlePasswordSubmit}>
+              <div className="mb-4">
+                <label htmlFor="pdf-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  PDF Password
+                </label>
+                <input
+                  type="password"
+                  id="pdf-password"
+                  ref={passwordInputRef}
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setPasswordError(null);
+                  }}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-brand-secondary focus:border-transparent dark:bg-slate-700 dark:text-white"
+                  placeholder="Enter password"
+                  disabled={isLoading}
+                  autoFocus
+                />
+                {passwordError && (
+                  <p className="mt-2 text-sm text-red-600 dark:text-red-400">{passwordError}</p>
+                )}
+              </div>
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  disabled={isLoading || !password.trim()}
+                  className="flex-1 px-4 py-2 bg-brand-secondary text-white font-medium rounded-lg hover:bg-sky-600 focus:outline-none focus:ring-4 focus:ring-sky-300 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
+                >
+                  {isLoading ? "Processing..." : "Submit"}
+                </button>
+                <button
+                  type="button"
+                  onClick={handlePasswordCancel}
+                  disabled={isLoading}
+                  className="px-4 py-2 bg-gray-500 text-white font-medium rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-300 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

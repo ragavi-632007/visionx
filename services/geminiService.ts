@@ -98,7 +98,7 @@ async function fileToGenerativePart(file: File): Promise<Part> {
   };
 }
 
-export const analyzeDocument = async (file: File, responseLanguageName: string = 'English'): Promise<AnalysisResult> => {
+export const analyzeDocument = async (file: File | File[], responseLanguageName: string = 'English'): Promise<AnalysisResult> => {
   const ai = getAiClient();
   const model = "gemini-2.5-pro";
 
@@ -119,8 +119,30 @@ export const analyzeDocument = async (file: File, responseLanguageName: string =
   const isRateLimited = (msg: string) => /quota|rate|429|resource exhausted/i.test(msg);
 
   try {
-    const filePart = await fileToGenerativePart(file);
-    const contents = { parts: [{ text: prompt }, filePart] };
+    // Handle both single file and array of files (for password-protected PDFs converted to images)
+    const files = Array.isArray(file) ? file : [file];
+    
+    // Validate files before processing
+    if (files.length === 0) {
+      throw new Error('No files provided for analysis');
+    }
+    
+    // Check file sizes
+    for (const f of files) {
+      if (!f || f.size === 0) {
+        throw new Error('One or more files are empty or invalid');
+      }
+    }
+    
+    console.log(`Processing ${files.length} file(s) for analysis`);
+    const fileParts = await Promise.all(files.map(f => fileToGenerativePart(f)));
+    
+    // Validate file parts were created
+    if (fileParts.length === 0 || fileParts.some(part => !part || !part.inlineData)) {
+      throw new Error('Failed to process files for analysis');
+    }
+    
+    const contents = { parts: [{ text: prompt }, ...fileParts] };
 
     let lastErr: any = null;
     for (let attempt = 0; attempt < 3; attempt++) {
@@ -163,6 +185,10 @@ export const analyzeDocument = async (file: File, responseLanguageName: string =
     }
     if (message.toLowerCase().includes('unsupported') || message.toLowerCase().includes('mime')) {
       throw new Error("Unsupported file type. Please upload PDF, DOCX, PNG, or JPG.");
+    }
+    // Check for password-protected PDF errors
+    if (message.includes('no pages') || message.includes('document has no pages')) {
+      throw new Error("The document appears to be password-protected or corrupted. If this is an Aadhaar PDF, please enter the password when prompted.");
     }
     throw new Error("Failed to analyze the document. The AI model could not process the request. Please ensure you've uploaded a clear document (PDF, DOCX, PNG, JPG).");
   }

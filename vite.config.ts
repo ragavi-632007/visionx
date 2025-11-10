@@ -16,6 +16,11 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
+      },
+      // Copy pdfjs worker to public folder
+      publicDir: 'public',
+      optimizeDeps: {
+        include: ['pdfjs-dist']
       }
     };
 });
